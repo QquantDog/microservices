@@ -1,0 +1,29 @@
+server:
+  port: 8075
+
+spring:
+  application:
+    name:
+      cart-service
+
+#
+#  ПОМЕНЯТЬ НА localhost 1!!
+#
+#  jdbc:postgresql://postgres-cart:5435/cart
+#  jdbc:postgresql://localhost:5435/cart
+  datasource:
+    url: jdbc:postgresql://localhost:5435/cart
+    username: default
+    password: default
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+logging:
+  level:
+    sql: debug
+#    web: debug
+#    org.hibernate: debug

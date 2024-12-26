@@ -1,0 +1,91 @@
+services:
+    postgres-restaurant:
+        image: postgres:latest
+        container_name: restaurant_db
+        environment:
+            POSTGRES_USER: default
+            POSTGRES_PASSWORD: default
+            POSTGRES_DB: restaurant
+            PGPORT: 5433
+        ports:
+            - 5433:5433
+        volumes:
+            - ./db_1/:/var/lib/postgresql/data
+        networks:
+            - microservices
+
+    postgres-inventory:
+        image: postgres:latest
+        container_name: inventory_db
+        environment:
+            POSTGRES_USER: default
+            POSTGRES_PASSWORD: default
+            POSTGRES_DB: inventory
+            PGPORT: 5434
+        ports:
+            - 5434:5434
+        volumes:
+            - ./db_2/:/var/lib/postgresql/data
+        networks:
+            - microservices
+
+    postgres-cart:
+        image: postgres:latest
+        container_name: cart_db
+        environment:
+            POSTGRES_USER: default
+            POSTGRES_PASSWORD: default
+            POSTGRES_DB: cart
+            PGPORT: 5435
+        ports:
+            - 5435:5435
+        volumes:
+            - ./db_3/:/var/lib/postgresql/data
+        networks:
+            - microservices
+
+    postgres-order:
+        image: postgres:latest
+        container_name: order_db
+        environment:
+            POSTGRES_USER: default
+            POSTGRES_PASSWORD: default
+            POSTGRES_DB: order
+            PGPORT: 5436
+        ports:
+            - 5436:5436
+        volumes:
+            - ./db_4/:/var/lib/postgresql/data
+        networks:
+            - microservices
+
+    postgres-customer:
+        image: postgres:latest
+        container_name: customer_db
+        environment:
+            POSTGRES_USER: default
+            POSTGRES_PASSWORD: default
+            POSTGRES_DB: customer
+            PGPORT: 5437
+        ports:
+            - 5437:5437
+        volumes:
+            - ./db_5/:/var/lib/postgresql/data
+        networks:
+            - microservices
+
+    pgadmin-1:
+        image: dpage/pgadmin4:latest
+        container_name: pgadmin_micruhi
+        environment:
+            PGADMIN_DEFAULT_EMAIL: default@example.com
+            PGADMIN_DEFAULT_PASSWORD: default
+        ports:
+            - 6019:80
+        volumes:
+            - ./pgadmin_local/:/var/lib/pgadmin
+        networks:
+            - microservices
+
+networks:
+    microservices:

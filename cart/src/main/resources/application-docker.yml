@@ -1,0 +1,24 @@
+server:
+  port: 8075
+
+spring:
+  application:
+    name:
+      cart-service
+
+  datasource:
+    url: jdbc:postgresql://postgres-cart:5435/cart
+    username: default
+    password: default
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+logging:
+  level:
+    sql: debug
+#    web: debug
+#    org.hibernate: debug

@@ -1,0 +1,30 @@
+server:
+  port: 7001
+
+spring:
+  application:
+    name: huita228
+  datasource:
+    url: jdbc:postgresql://localhost:5437/customer
+    username: default
+    password: default
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+
+keycloak:
+  server-url: http://localhost:8080
+  realm: restaurant
+  username: admin
+  password: admin
+  client-id: OAO
+  client-secret: JPcYiOIIkB1jQxfpxf73x7pmWqJzKKhq
+
+
+logging:
+  level:
+    sql: debug

@@ -1,0 +1,25 @@
+server:
+  port: 8073
+
+spring:
+  application:
+    name:
+      restaurant-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/restaurant
+    username: default
+    password: default
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+logging:
+  level:
+    sql: debug
+    org:
+      springframework:
+        security: DEBUG

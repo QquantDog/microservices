@@ -1,0 +1,24 @@
+server:
+  port: 8076
+
+spring:
+  application:
+    name:
+      order-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5436/order
+    username: default
+    password: default
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+logging:
+  level:
+    sql: debug
+#    web: debug
+#    org.hibernate: debug
