@@ -3,6 +3,8 @@ package com.orlov.gateway_resource.config;
 import com.orlov.gateway_resource.jwt.JwtConverterMono;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,15 +33,28 @@ public class SecurityConfig {
         return ReactiveJwtDecoders.fromIssuerLocation("http://localhost:8080/realms/restaurant");
     }
 
+//    @Bean
+//    public RouteLocator routeLocator(RouteLocatorBuilder builder) {
+//        return builder.routes()
+//                .route("test_redirection", r -> r.path("/test/**")
+//                        .filters(f -> f.filter(new CustomAuthFilter()))
+//                        .uri("http://localhost:10001"))
+//                .build();
+//    }
+
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
 
 
         http.authorizeExchange(auth -> auth
-                        .pathMatchers("/meta/**").permitAll()
-                        .anyExchange().authenticated())
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)));
+                        .pathMatchers("/api/v1/user/registration/**").permitAll()
+                        .anyExchange().authenticated()
+//                        .pathMatchers("/meta/**").permitAll()
+//                        .anyExchange().authenticated()
+                )
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
+        ;
                 http.csrf(ServerHttpSecurity.CsrfSpec::disable);
         return http.build();
 

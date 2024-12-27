@@ -1,6 +1,8 @@
 package com.orlov.restaurantservice.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -8,6 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "items")
+@Cache(region = "itemCache", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

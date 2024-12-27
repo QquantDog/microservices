@@ -4,6 +4,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -24,9 +25,7 @@ public class JwtConverterMono implements Converter<Jwt, Mono<AbstractAuthenticat
 
     @Override
     public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
-        System.out.println("INSIDE");
-        System.out.println(jwt);
-        System.out.println("-----------");
+        System.out.println("--- PARSING JWT ---\n" + jwt.toString());
         Collection<GrantedAuthority> authorities = Stream.concat(
                 jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
                 extractRealmRoles(jwt).stream()).collect(Collectors.toSet());

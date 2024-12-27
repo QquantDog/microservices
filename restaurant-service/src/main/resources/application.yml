@@ -16,10 +16,43 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+    properties:
+      hibernate:
+        cache:
+          redisson:
+            collection:
+              eviction:
+                max_entries: 20000
+              localcache:
+                max_idle_time: 120000
+                time_to_live: 240000
+              expiration:
+                max_idle_time: 120000
+                time_to_live: 240000
+            entity:
+              eviction:
+                max_entries: 10000
+              localcache:
+                max_idle_time: 240000
+                time_to_live: 480000
+              expiration:
+                max_idle_time: 240000
+                time_to_live: 480000
+
+
+            config: redisson.yaml
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.redisson.hibernate.RedissonRegionFactory
+
 
 logging:
   level:
+    root: warn
     sql: debug
     org:
+      hibernate:
+        cache: debug
       springframework:
         security: DEBUG

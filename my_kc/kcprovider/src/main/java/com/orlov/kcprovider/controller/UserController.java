@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/custom-user")
+@RequestMapping("/api/v1/user")
 public class UserController {
 
     @Autowired
@@ -52,7 +52,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/create-with-details")
+    @PostMapping("/registration")
     public ResponseEntity<UserDto> createUserWithDetails(@RequestBody @Valid UserWithDetailsRegisterDto dto) {
         User user = userService.createUserWithDetails(dto);
         return new ResponseEntity<>(modelMapper.map(user, UserDto.class), HttpStatus.CREATED);

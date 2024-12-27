@@ -3,12 +3,15 @@ package com.orlov.restaurantservice.model;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "menus")
+@Cache(region = "menuCache", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
