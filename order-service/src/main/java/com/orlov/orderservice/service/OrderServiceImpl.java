@@ -67,7 +67,9 @@ public class OrderServiceImpl implements OrderService {
         UUID uuid = createOrderDto.getCustomerUUID();
         ResponseEntity<Void> customerResponse = customerClient
                 .get()
-                .uri("/custom-user/exists/" + uuid.toString())
+                .uri("/api/v1/user/exists/" + uuid.toString())
+                .header("uuid", uuid.toString())
+                .header("roles", "ROLE_SERVICE")
 //                .accept(APPLICATION_JSON)
                 .retrieve().toBodilessEntity();
 
