@@ -14,8 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class CreateOrderDto {
-    @JsonProperty("customer_uuid")
-    private UUID customerUUID;
 
     @JsonProperty("restaurant_code")
     private String restaurantCode;

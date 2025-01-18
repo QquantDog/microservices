@@ -5,6 +5,7 @@ import com.orlov.kcprovider.dto.UserUpdateDto;
 import com.orlov.kcprovider.dto.UserWithDetailsRegisterDto;
 import com.orlov.kcprovider.model.User;
 import com.orlov.kcprovider.repository.UserRepository;
+import com.orlov.kcprovider.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -41,6 +42,12 @@ public class UserService {
 
     public User getUserByUUID(UUID uuid){
         return userRepository.findByCustomerUUID(uuid)
+                .orElseThrow(()->new RuntimeException("User not found by UUID"));
+    }
+
+    public User getMe(){
+        var t = SecurityUtils.getContextUserUUID();
+        return userRepository.findByCustomerUUID(SecurityUtils.getContextUserUUID())
                 .orElseThrow(()->new RuntimeException("User not found by UUID"));
     }
 

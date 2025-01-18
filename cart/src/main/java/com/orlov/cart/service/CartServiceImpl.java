@@ -10,13 +10,16 @@ import com.orlov.cart.model.CartMapping;
 import com.orlov.cart.repository.CartItemRepository;
 import com.orlov.cart.repository.CartMappingRepository;
 import com.orlov.cart.repository.CartRepository;
+import com.orlov.cart.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -39,7 +42,14 @@ public class CartServiceImpl implements CartService {
     private CartItemRepository cartItemRepository;
 
     @Autowired
+    @Qualifier("RestaurantClient")
     private RestClient restClient;
+
+    @Autowired
+    @Qualifier("CustomerClient")
+    private RestClient customerClient;
+
+
 
     @Autowired
     private CartMappingRepository cartMappingRepository;
@@ -97,6 +107,17 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Cart createCartMapping(UUID customerUUID, String restaurantCode) {
+
+        ResponseEntity<Void> customerResponse = customerClient
+                .get()
+                .uri("/api/v1/user/exists/" + customerUUID.toString())
+                .header("uuid", "order_service")
+                .header("roles", "ROLE_SERVICE")
+//                .accept(APPLICATION_JSON)
+                .retrieve().toBodilessEntity();
+
+        if(customerResponse.getStatusCode().isError()) throw new RuntimeException("Customer not found by UUID");
+
         ResponseEntity<Void> existsRest;
         try{
             existsRest = restClient.get()

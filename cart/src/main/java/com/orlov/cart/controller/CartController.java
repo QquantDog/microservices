@@ -6,10 +6,12 @@ import com.orlov.cart.dto.RemoveItemFromCart;
 import com.orlov.cart.dto.RestaurantCartDto;
 import com.orlov.cart.model.Cart;
 import com.orlov.cart.service.CartService;
+import com.orlov.cart.utils.SecurityUtils;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,33 +27,34 @@ public class CartController {
     private ModelMapper modelMapper;
 
 //    customer uuid будет взят из хедера запроса
-    @GetMapping("customer/{customerUUID}/restaurant/{restaurantCode}")
-    public ResponseEntity<RestaurantCartDto> getCartItems(@PathVariable("customerUUID") UUID customerUUID,
-                                                     @PathVariable("restaurantCode") String restaurantCode){
-        Cart cart = cartService.getCartWithInfo(customerUUID, restaurantCode);
+    @GetMapping("restaurant/{restaurantCode}")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    public ResponseEntity<RestaurantCartDto> getCartItems(@PathVariable("restaurantCode") String restaurantCode){
+        Cart cart = cartService.getCartWithInfo(SecurityUtils.getContextUserUUID(), restaurantCode);
         return ResponseEntity.ok(convertCartToRestaurantCartDto(cart));
     }
 
-    @PostMapping("customer/{customerUUID}/restaurant/{restaurantCode}")
-    public ResponseEntity<RestaurantCartDto> changeCartItem(@PathVariable("customerUUID") UUID customerUUID,
-                                                            @PathVariable("restaurantCode") String restaurantCode,
+
+    @PostMapping("restaurant/{restaurantCode}")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    public ResponseEntity<RestaurantCartDto> changeCartItem(@PathVariable("restaurantCode") String restaurantCode,
                                                             @RequestBody @Valid CartChangeDto cartChangeDto){
-        Cart cart = cartService.changeCart(customerUUID, restaurantCode, cartChangeDto);
+        Cart cart = cartService.changeCart(SecurityUtils.getContextUserUUID(), restaurantCode, cartChangeDto);
         return ResponseEntity.ok(convertCartToRestaurantCartDto(cart));
     }
 
-    @PostMapping("customer/{customerUUID}/restaurant/{restaurantCode}/add-to-cart")
-    public ResponseEntity<RestaurantCartDto> addItemToCart(@PathVariable("customerUUID") UUID customerUUID,
-                                                            @PathVariable("restaurantCode") String restaurantCode,
+    @PostMapping("restaurant/{restaurantCode}/add-to-cart")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    public ResponseEntity<RestaurantCartDto> addItemToCart(@PathVariable("restaurantCode") String restaurantCode,
                                                             @RequestBody @Valid AddItemToCartDto addItemToCartDto){
-        Cart cart = cartService.addItemToCart(customerUUID, restaurantCode, addItemToCartDto);
+        Cart cart = cartService.addItemToCart(SecurityUtils.getContextUserUUID(), restaurantCode, addItemToCartDto);
         return ResponseEntity.ok(convertCartToRestaurantCartDto(cart));
     }
-    @PostMapping("customer/{customerUUID}/restaurant/{restaurantCode}/del-from-cart")
-    public ResponseEntity<?> addItemToCart(@PathVariable("customerUUID") UUID customerUUID,
-                                                           @PathVariable("restaurantCode") String restaurantCode,
+    @PostMapping("restaurant/{restaurantCode}/del-from-cart")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    public ResponseEntity<?> addItemToCart(@PathVariable("restaurantCode") String restaurantCode,
                                                            @RequestBody @Valid RemoveItemFromCart removeItemFromCart){
-        cartService.delItemFromCart(customerUUID, restaurantCode, removeItemFromCart);
+        cartService.delItemFromCart(SecurityUtils.getContextUserUUID(), restaurantCode, removeItemFromCart);
         return ResponseEntity.noContent().build();
     }
 
