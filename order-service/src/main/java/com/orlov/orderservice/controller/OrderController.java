@@ -4,11 +4,13 @@ import com.orlov.orderservice.dto.create.CreateOrderDto;
 import com.orlov.orderservice.dto.FullOrderDto;
 import com.orlov.orderservice.model.Order;
 import com.orlov.orderservice.service.OrderService;
+import com.orlov.orderservice.utils.SecurityUtils;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class OrderController {
     private ModelMapper modelMapper;
 
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<List<FullOrderDto>> getAllOrders() {
         List<Order> orders = orderService.getAllOrders();
         List<FullOrderDto> ordersDto = orders.stream().map(this::mapToFullOrderDto).toList();
@@ -31,13 +34,23 @@ public class OrderController {
     }
 
     @GetMapping("/{customerUUID}")
+    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<List<FullOrderDto>> getAllCustomerOrders(@PathVariable("customerUUID") UUID customerUUID) {
         List<Order> orders = orderService.getFullOrderByCustomerUUID(customerUUID);
         List<FullOrderDto> ordersDto = orders.stream().map(this::mapToFullOrderDto).toList();
         return new ResponseEntity<>(ordersDto, HttpStatus.OK);
     }
 
+    @GetMapping("/my")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    public ResponseEntity<List<FullOrderDto>> getMyOrders() {
+        List<Order> orders = orderService.getFullOrderByCustomerUUID(SecurityUtils.getContextUserUUID());
+        List<FullOrderDto> ordersDto = orders.stream().map(this::mapToFullOrderDto).toList();
+        return new ResponseEntity<>(ordersDto, HttpStatus.OK);
+    }
+
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<?> createOrder(@RequestBody @Valid CreateOrderDto createOrderDto) {
         Order order = orderService.createOrder(createOrderDto);
         return new ResponseEntity<>(modelMapper.map(order, FullOrderDto.class), HttpStatus.CREATED);

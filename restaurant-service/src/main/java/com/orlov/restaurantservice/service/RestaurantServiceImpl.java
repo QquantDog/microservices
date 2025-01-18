@@ -7,6 +7,7 @@ import com.orlov.restaurantservice.repository.RestaurantRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,12 +29,14 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Transactional
     public Restaurant createRestaurant(RestaurantCreateDto restaurantCreateDto) {
         return restaurantRepository
                 .saveAndFlush(modelMapper.map(restaurantCreateDto, Restaurant.class));
     }
 
     @Override
+    @Transactional
     public Restaurant updateRestaurant(Long restaurantId, RestaurantUpdateDto restaurantUpdateDto) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(()->new RuntimeException("Restaurant not found"));
@@ -42,12 +45,14 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Transactional
     public void existsRestaurantByCode(String restaurantCode) {
         restaurantRepository.findRestaurantByRestaurantCode(restaurantCode)
                 .orElseThrow(()-> new RuntimeException("Restaurant not found"));
     }
 
     @Override
+    @Transactional
     public void deleteRestaurant(Long restaurantId) {
 //        or find + throw if not found + delete
         restaurantRepository.deleteById(restaurantId);

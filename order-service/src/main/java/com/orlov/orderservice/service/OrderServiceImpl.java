@@ -6,6 +6,7 @@ import com.orlov.orderservice.model.Order;
 import com.orlov.orderservice.model.OrderItem;
 import com.orlov.orderservice.repository.OrderItemRepository;
 import com.orlov.orderservice.repository.OrderRepository;
+import com.orlov.orderservice.utils.SecurityUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,11 +65,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createOrder(CreateOrderDto createOrderDto) {
 
-        UUID uuid = createOrderDto.getCustomerUUID();
+        UUID customerUUID = SecurityUtils.getContextUserUUID();
         ResponseEntity<Void> customerResponse = customerClient
                 .get()
-                .uri("/api/v1/user/exists/" + uuid.toString())
-                .header("uuid", uuid.toString())
+                .uri("/api/v1/user/exists/" + customerUUID.toString())
+                .header("uuid", "order_service")
                 .header("roles", "ROLE_SERVICE")
 //                .accept(APPLICATION_JSON)
                 .retrieve().toBodilessEntity();
@@ -93,6 +94,8 @@ public class OrderServiceImpl implements OrderService {
         ResponseEntity<Void> resp = inventoryClient.post()
                 .uri("/api/v1/stock/order-reserve")
                 .accept(APPLICATION_JSON)
+                .header("uuid", "order_service")
+                .header("roles", "ROLE_SERVICE")
                 .body(createOrderDto)
                 .retrieve().toBodilessEntity();
         if(resp.getStatusCode().isError()) throw new RuntimeException("Error reserving items in stock");
@@ -100,7 +103,7 @@ public class OrderServiceImpl implements OrderService {
 //        првоерить бы что пользователь существует но так как он будет взят их хедера
 //        то покс НО проверить надо бы конечно
         Order order = Order.builder()
-                .customerUUID(createOrderDto.getCustomerUUID())
+                .customerUUID(customerUUID)
                 .restaurantCode(createOrderDto.getRestaurantCode())
                 .build();
         HashMap<String, ItemDto> mapItems = new HashMap<>();
